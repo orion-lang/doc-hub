@@ -1,0 +1,1177 @@
+{
+  "metadata": {
+    "description": "Developer Portal Search Testing Dataset - Based on Actual API Documentation",
+    "version": "2.0",
+    "total_queries": 127,
+    "apis": [
+      {
+        "name": "ACH Payments API",
+        "version": "v2",
+        "base_path": "ach/v2/payments"
+      },
+      {
+        "name": "Foreign Exchange API", 
+        "version": "v3",
+        "base_path": "foreign-exchange/v3"
+      },
+      {
+        "name": "Instant Payments API",
+        "version": "v1", 
+        "base_path": "instant-payments/v1"
+      }
+    ],
+    "testing_categories": [
+      "API Endpoint Searches",
+      "Conceptual Queries",
+      "Error/Troubleshooting",
+      "Synonym Recognition",
+      "Intent Variation",
+      "Typo Tolerance",
+      "Acronym Handling",
+      "Negative Testing",
+      "Cross-category Accuracy"
+    ]
+  },
+
+  "expected_content_sections": {
+    "ach_payments": {
+      "endpoints": [
+        "POST ach/v2/payments/credit-transfers - Initiate an ACH credit",
+        "POST ach/v2/payments/direct-debits - Initiate an ACH debit",
+        "GET ach/v2/payments/{payment_id} - Check transaction status"
+      ],
+      "key_concepts": [
+        "SEC codes: CCD, PPD, CTX, IAT, WEB, TEL",
+        "20 second timeout",
+        "Mutual authentication certificates",
+        "OAuth 2 with ACH-All scope",
+        "Idempotency-key header",
+        "gateway-entity-id header",
+        "client-request-id (UUID v4)",
+        "Webhook: ach.payment.exception-action-required.v1",
+        "Return codes: R01-R70, C61-C69",
+        "duplicate_check parameter"
+      ]
+    },
+    "foreign_exchange": {
+      "endpoints": [
+        "GET foreign-exchange/v3/customer-rate-sheets",
+        "POST foreign-exchange/v3/reference-rate-sheets",
+        "GET foreign-exchange/v3/global-rate-sheets",
+        "GET foreign-exchange/v3/rates - Real-time rates",
+        "POST foreign-exchange/v3/quotes",
+        "POST foreign-exchange/v3/quotes/cancel",
+        "POST foreign-exchange/v3/deals/from-quotes",
+        "POST foreign-exchange/v3/deals - One-step deals",
+        "POST foreign-exchange/v3/deals/offset",
+        "POST foreign-exchange/v3/deals/search",
+        "POST foreign-exchange/v3/quotes/offset",
+        "POST foreign-exchange/v3/payments/validate",
+        "POST foreign-exchange/v3/payments",
+        "POST foreign-exchange/v3/payments/one-step",
+        "POST foreign-exchange/v3/payments/status"
+      ],
+      "key_concepts": [
+        "base_currency_code and contra_currency_code (ISO 4217)",
+        "exchange_rate and exchange_rate_precision",
+        "value_date_type: SPOT, TOM, 1W",
+        "buy_or_sell indicator",
+        "DIRECT vs INDIRECT conversion rule",
+        "quote_id and deal_id",
+        "third_party_spread_percent"
+      ]
+    },
+    "instant_payments": {
+      "endpoints": [
+        "GET instant-payments/v1/routing-numbers/verify/{routing_number}",
+        "POST instant-payments/v1/credit-transfers",
+        "GET instant-payments/v1/credit-transfers/{uetr}",
+        "POST instant-payments/v1/search"
+      ],
+      "key_concepts": [
+        "Payment rails: RTP, FEDNOW, RTP_and_FEDNOW",
+        "UETR (Unique End-to-End Transaction Reference)",
+        "instant_payments_enabled",
+        "participant_available",
+        "Status: COMPLETED, REJECTED, PROCESSING, RECEIVED",
+        "Maximum amount: $1,000,000",
+        "7 second timeout for routing verification",
+        "debtor and creditor objects",
+        "duplicate_check parameter",
+        "Idempotency-Key header"
+      ]
+    }
+  },
+
+  "test_queries": {
+    "api_endpoint_searches": [
+      {
+        "query_id": "EP-001",
+        "query": "credit transfer endpoint",
+        "category": "API Endpoint Search",
+        "expected_content": ["POST ach/v2/payments/credit-transfers", "POST instant-payments/v1/credit-transfers"],
+        "relevance_notes": "Should return both ACH credit and Instant Payment credit transfer endpoints"
+      },
+      {
+        "query_id": "EP-002",
+        "query": "POST /payments",
+        "category": "API Endpoint Search",
+        "expected_content": ["ach/v2/payments/credit-transfers", "ach/v2/payments/direct-debits", "foreign-exchange/v3/payments"],
+        "relevance_notes": "Should match payment POST endpoints across APIs"
+      },
+      {
+        "query_id": "EP-003",
+        "query": "GET payment status",
+        "category": "API Endpoint Search",
+        "expected_content": ["GET ach/v2/payments/{payment_id}", "GET instant-payments/v1/credit-transfers/{uetr}", "POST foreign-exchange/v3/payments/status"],
+        "relevance_notes": "Status check endpoints across all APIs"
+      },
+      {
+        "query_id": "EP-004",
+        "query": "exchange rate endpoint",
+        "category": "API Endpoint Search",
+        "expected_content": ["GET foreign-exchange/v3/rates", "GET foreign-exchange/v3/customer-rate-sheets", "GET foreign-exchange/v3/global-rate-sheets"],
+        "relevance_notes": "Forex rate-related endpoints"
+      },
+      {
+        "query_id": "EP-005",
+        "query": "direct debit API",
+        "category": "API Endpoint Search",
+        "expected_content": ["POST ach/v2/payments/direct-debits"],
+        "relevance_notes": "ACH debit endpoint"
+      },
+      {
+        "query_id": "EP-006",
+        "query": "verify routing number",
+        "category": "API Endpoint Search",
+        "expected_content": ["GET instant-payments/v1/routing-numbers/verify/{routing_number}"],
+        "relevance_notes": "Instant payments routing verification"
+      },
+      {
+        "query_id": "EP-007",
+        "query": "FX quotes endpoint",
+        "category": "API Endpoint Search",
+        "expected_content": ["POST foreign-exchange/v3/quotes", "POST foreign-exchange/v3/quotes/cancel", "POST foreign-exchange/v3/quotes/offset"],
+        "relevance_notes": "Foreign exchange quote endpoints"
+      },
+      {
+        "query_id": "EP-008",
+        "query": "book a deal",
+        "category": "API Endpoint Search",
+        "expected_content": ["POST foreign-exchange/v3/deals", "POST foreign-exchange/v3/deals/from-quotes"],
+        "relevance_notes": "FX deal booking endpoints"
+      },
+      {
+        "query_id": "EP-009",
+        "query": "search transactions",
+        "category": "API Endpoint Search",
+        "expected_content": ["POST instant-payments/v1/search", "POST foreign-exchange/v3/deals/search"],
+        "relevance_notes": "Transaction search endpoints"
+      },
+      {
+        "query_id": "EP-010",
+        "query": "payment validation",
+        "category": "API Endpoint Search",
+        "expected_content": ["POST foreign-exchange/v3/payments/validate"],
+        "relevance_notes": "FX payment validation endpoint"
+      },
+      {
+        "query_id": "EP-011",
+        "query": "one-step payment",
+        "category": "API Endpoint Search",
+        "expected_content": ["POST foreign-exchange/v3/payments/one-step", "POST foreign-exchange/v3/deals"],
+        "relevance_notes": "One-step FX operations"
+      },
+      {
+        "query_id": "EP-012",
+        "query": "offset a deal",
+        "category": "API Endpoint Search",
+        "expected_content": ["POST foreign-exchange/v3/deals/offset", "POST foreign-exchange/v3/quotes/offset"],
+        "relevance_notes": "FX offset endpoints"
+      }
+    ],
+
+    "conceptual_queries": [
+      {
+        "query_id": "CQ-001",
+        "query": "how to authenticate API requests",
+        "category": "Conceptual",
+        "expected_content": ["OAuth 2 API", "Bearer token", "Authorization header", "access_token", "24 hours", "My Apps"],
+        "relevance_notes": "Authentication documentation across all APIs"
+      },
+      {
+        "query_id": "CQ-002",
+        "query": "mutual authentication certificate",
+        "category": "Conceptual",
+        "expected_content": ["Mutual authentication certificates", "validation and production", "not supported in sandbox", "Hello Wells Fargo API", ".pem file", ".key file"],
+        "relevance_notes": "mTLS certificate requirements"
+      },
+      {
+        "query_id": "CQ-003",
+        "query": "what is gateway-entity-id",
+        "category": "Conceptual",
+        "expected_content": ["gateway-entity-id", "Wells Fargo Gateway", "onboarding", "22 characters"],
+        "relevance_notes": "Gateway entity ID header explanation"
+      },
+      {
+        "query_id": "CQ-004",
+        "query": "supported SEC codes",
+        "category": "Conceptual",
+        "expected_content": ["CCD", "PPD", "CTX", "IAT", "WEB", "TEL", "Corporate Credit or Debit", "Prearranged Payment"],
+        "relevance_notes": "ACH Standard Entry Class codes"
+      },
+      {
+        "query_id": "CQ-005",
+        "query": "timeout settings",
+        "category": "Conceptual",
+        "expected_content": ["20 seconds", "7 seconds", "504", "timeout"],
+        "relevance_notes": "API timeout configurations"
+      },
+      {
+        "query_id": "CQ-006",
+        "query": "idempotency key usage",
+        "category": "Conceptual",
+        "expected_content": ["idempotency-key", "UUID v4", "RFC4122", "24-hour", "safe retry", "duplicate"],
+        "relevance_notes": "Idempotency key documentation"
+      },
+      {
+        "query_id": "CQ-007",
+        "query": "client-request-id format",
+        "category": "Conceptual",
+        "expected_content": ["client-request-id", "UUID", "RFC 4122", "36 characters", "track each API call"],
+        "relevance_notes": "Client request ID header requirements"
+      },
+      {
+        "query_id": "CQ-008",
+        "query": "instant payment networks",
+        "category": "Conceptual",
+        "expected_content": ["RTP", "FEDNOW", "RTP_and_FEDNOW", "payment_rail", "clearing network"],
+        "relevance_notes": "Instant payment network options"
+      },
+      {
+        "query_id": "CQ-009",
+        "query": "transaction status values",
+        "category": "Conceptual",
+        "expected_content": ["COMPLETED", "REJECTED", "PROCESSING", "RECEIVED", "PENDING", "SETTLED"],
+        "relevance_notes": "Payment status enumeration"
+      },
+      {
+        "query_id": "CQ-010",
+        "query": "currency code format",
+        "category": "Conceptual",
+        "expected_content": ["ISO 4217", "base_currency_code", "contra_currency_code", "3 characters", "USD"],
+        "relevance_notes": "Currency code standards"
+      },
+      {
+        "query_id": "CQ-011",
+        "query": "exchange rate calculation",
+        "category": "Conceptual",
+        "expected_content": ["DIRECT", "INDIRECT", "exchange_rate_conversion_rule", "multiplied", "divided"],
+        "relevance_notes": "FX rate calculation methods"
+      },
+      {
+        "query_id": "CQ-012",
+        "query": "ACH webhook events",
+        "category": "Conceptual",
+        "expected_content": ["ach.payment.exception-action-required.v1", "Return", "Notification of change", "Pre-note return", "webhook notification"],
+        "relevance_notes": "ACH webhook event types"
+      },
+      {
+        "query_id": "CQ-013",
+        "query": "maximum payment amount",
+        "category": "Conceptual",
+        "expected_content": ["$1,000,000", "99999999.99", "maximum_amount", "amount limit"],
+        "relevance_notes": "Transaction amount limits"
+      },
+      {
+        "query_id": "CQ-014",
+        "query": "what is UETR",
+        "category": "Conceptual",
+        "expected_content": ["uetr", "Unique End-to-End Transaction Reference", "credit-transfers/{uetr}"],
+        "relevance_notes": "UETR identifier explanation"
+      },
+      {
+        "query_id": "CQ-015",
+        "query": "value date types",
+        "category": "Conceptual",
+        "expected_content": ["SPOT", "TOM", "1W", "value_date_type", "trade maturity"],
+        "relevance_notes": "FX value date options"
+      }
+    ],
+
+    "error_troubleshooting": [
+      {
+        "query_id": "ER-001",
+        "query": "error 504 timeout",
+        "category": "Error/Troubleshooting",
+        "expected_content": ["504", "20 seconds", "7 seconds", "timeout", "Server timed out"],
+        "relevance_notes": "Timeout error handling"
+      },
+      {
+        "query_id": "ER-002",
+        "query": "return reason code R01",
+        "category": "Error/Troubleshooting",
+        "expected_content": ["return_reason_code", "Nacha", "R01", "Return reason codes"],
+        "relevance_notes": "ACH return code documentation"
+      },
+      {
+        "query_id": "ER-003",
+        "query": "error code 1071",
+        "category": "Error/Troubleshooting",
+        "expected_content": ["1071", "Instant Payments", "error codes"],
+        "relevance_notes": "Instant payment error series"
+      },
+      {
+        "query_id": "ER-004",
+        "query": "payment rejected status",
+        "category": "Error/Troubleshooting",
+        "expected_content": ["REJECTED", "reason_code", "reason_description", "status"],
+        "relevance_notes": "Payment rejection handling"
+      },
+      {
+        "query_id": "ER-005",
+        "query": "duplicate transaction error",
+        "category": "Error/Troubleshooting",
+        "expected_content": ["duplicate_check", "idempotency-key", "duplicate", "90 days"],
+        "relevance_notes": "Duplicate detection"
+      },
+      {
+        "query_id": "ER-006",
+        "query": "certificate validation failure",
+        "category": "Error/Troubleshooting",
+        "expected_content": ["1071-001", "Certificate validation failure", "Gateway Support"],
+        "relevance_notes": "Certificate error"
+      },
+      {
+        "query_id": "ER-007",
+        "query": "rate limit exceeded 429",
+        "category": "Error/Troubleshooting",
+        "expected_content": ["429", "429-003", "rate limit", "requests per second"],
+        "relevance_notes": "Rate limiting error"
+      },
+      {
+        "query_id": "ER-008",
+        "query": "dishonored return",
+        "category": "Error/Troubleshooting",
+        "expected_content": ["dishonored", "R61", "R62", "R67", "R68", "R69", "R70", "return_type_code"],
+        "relevance_notes": "ACH dishonored return codes"
+      },
+      {
+        "query_id": "ER-009",
+        "query": "notification of change NOC",
+        "category": "Error/Troubleshooting",
+        "expected_content": ["Notification of Change", "C61", "C62", "C63", "NOC", "refused"],
+        "relevance_notes": "ACH NOC codes"
+      },
+      {
+        "query_id": "ER-010",
+        "query": "routing number not found",
+        "category": "Error/Troubleshooting",
+        "expected_content": ["1071-028", "could not be found", "routing_number", "instant_payments_enabled"],
+        "relevance_notes": "Routing verification failure"
+      },
+      {
+        "query_id": "ER-011",
+        "query": "invalid header error",
+        "category": "Error/Troubleshooting",
+        "expected_content": ["1071-052", "Missing or invalid headers"],
+        "relevance_notes": "Header validation error"
+      },
+      {
+        "query_id": "ER-012",
+        "query": "amount exceeds limit",
+        "category": "Error/Troubleshooting",
+        "expected_content": ["1071-031", "$1,000,000", "network amount limit", "exceeds"],
+        "relevance_notes": "Amount limit exceeded error"
+      },
+      {
+        "query_id": "ER-013",
+        "query": "uetr not found error",
+        "category": "Error/Troubleshooting",
+        "expected_content": ["404", "1071-028", "uetr", "could not be found"],
+        "relevance_notes": "Transaction not found error"
+      },
+      {
+        "query_id": "ER-014",
+        "query": "internal server error 500",
+        "category": "Error/Troubleshooting",
+        "expected_content": ["500", "1071-053", "Internal server error", "1005-020"],
+        "relevance_notes": "Server error handling"
+      },
+      {
+        "query_id": "ER-015",
+        "query": "working hours payment error",
+        "category": "Error/Troubleshooting",
+        "expected_content": ["1071-015", "working hours", "outside"],
+        "relevance_notes": "Business hours restriction"
+      }
+    ],
+
+    "synonym_recognition": [
+      {
+        "query_id": "SY-001",
+        "query": "auth token",
+        "category": "Synonym Recognition",
+        "synonyms_tested": ["auth = authentication", "token = access_token"],
+        "expected_content": ["Authorization", "Bearer", "OAuth 2", "access_token"],
+        "relevance_notes": "Should match authentication docs"
+      },
+      {
+        "query_id": "SY-002",
+        "query": "FX rates",
+        "category": "Synonym Recognition",
+        "synonyms_tested": ["FX = forex = foreign exchange"],
+        "expected_content": ["foreign-exchange", "exchange_rate", "rate_sheet"],
+        "relevance_notes": "Should match Foreign Exchange API"
+      },
+      {
+        "query_id": "SY-003",
+        "query": "wire transfer",
+        "category": "Synonym Recognition",
+        "synonyms_tested": ["wire transfer ≈ credit transfer ≈ payment"],
+        "expected_content": ["credit-transfers", "payments", "transfer"],
+        "relevance_notes": "Should match payment endpoints"
+      },
+      {
+        "query_id": "SY-004",
+        "query": "callback URL",
+        "category": "Synonym Recognition",
+        "synonyms_tested": ["callback = webhook"],
+        "expected_content": ["webhook", "notification", "listener url"],
+        "relevance_notes": "Should match webhook documentation"
+      },
+      {
+        "query_id": "SY-005",
+        "query": "bank routing",
+        "category": "Synonym Recognition",
+        "synonyms_tested": ["bank routing = routing number = ABA"],
+        "expected_content": ["routing_number", "routing-numbers", "ABA", "9 digits"],
+        "relevance_notes": "Should match routing verification"
+      },
+      {
+        "query_id": "SY-006",
+        "query": "real-time payment",
+        "category": "Synonym Recognition",
+        "synonyms_tested": ["real-time = instant"],
+        "expected_content": ["Instant Payments", "near real-time", "instant settlement"],
+        "relevance_notes": "Should match Instant Payments API"
+      },
+      {
+        "query_id": "SY-007",
+        "query": "debit collection",
+        "category": "Synonym Recognition",
+        "synonyms_tested": ["debit collection = direct debit"],
+        "expected_content": ["direct-debits", "debit", "collect from a debtor"],
+        "relevance_notes": "Should match ACH debit endpoint"
+      },
+      {
+        "query_id": "SY-008",
+        "query": "cert authentication",
+        "category": "Synonym Recognition",
+        "synonyms_tested": ["cert = certificate"],
+        "expected_content": ["Mutual authentication certificates", ".pem", ".key"],
+        "relevance_notes": "Should match certificate docs"
+      },
+      {
+        "query_id": "SY-009",
+        "query": "currency pair",
+        "category": "Synonym Recognition",
+        "synonyms_tested": ["currency pair = base/contra currency"],
+        "expected_content": ["base_currency_code", "contra_currency_code", "exchange"],
+        "relevance_notes": "Should match FX currency parameters"
+      },
+      {
+        "query_id": "SY-010",
+        "query": "payment rails",
+        "category": "Synonym Recognition",
+        "synonyms_tested": ["rails = network = clearing network"],
+        "expected_content": ["RTP", "FEDNOW", "payment_rail", "clearing network"],
+        "relevance_notes": "Should match payment network docs"
+      },
+      {
+        "query_id": "SY-011",
+        "query": "API key",
+        "category": "Synonym Recognition",
+        "synonyms_tested": ["API key = access token = Bearer token"],
+        "expected_content": ["Authorization", "Bearer", "My Apps", "OAuth 2"],
+        "relevance_notes": "Should match authentication"
+      },
+      {
+        "query_id": "SY-012",
+        "query": "test environment",
+        "category": "Synonym Recognition",
+        "synonyms_tested": ["test environment = sandbox"],
+        "expected_content": ["sandbox", "api-sandbox.wellsfargo.com", "testing"],
+        "relevance_notes": "Should match sandbox documentation"
+      },
+      {
+        "query_id": "SY-013",
+        "query": "spot rate",
+        "category": "Synonym Recognition",
+        "synonyms_tested": ["spot = immediate settlement"],
+        "expected_content": ["SPOT", "value_date_type", "rate_type"],
+        "relevance_notes": "Should match FX spot rate docs"
+      },
+      {
+        "query_id": "SY-014",
+        "query": "retry logic",
+        "category": "Synonym Recognition",
+        "synonyms_tested": ["retry = idempotency"],
+        "expected_content": ["idempotency-key", "safe retry", "duplicate_check"],
+        "relevance_notes": "Should match retry/idempotency docs"
+      },
+      {
+        "query_id": "SY-015",
+        "query": "beneficiary account",
+        "category": "Synonym Recognition",
+        "synonyms_tested": ["beneficiary = creditor = recipient"],
+        "expected_content": ["creditor", "recipient", "receiving", "account_number"],
+        "relevance_notes": "Should match creditor/recipient docs"
+      }
+    ],
+
+    "intent_variation": [
+      {
+        "query_id": "IV-001",
+        "query": "create ACH payment",
+        "category": "Intent Variation",
+        "base_intent": "ACH payment initiation",
+        "expected_content": ["POST ach/v2/payments/credit-transfers", "Initiate an ACH credit"],
+        "relevance_notes": "Action-oriented phrasing"
+      },
+      {
+        "query_id": "IV-002",
+        "query": "how do I send an ACH transfer",
+        "category": "Intent Variation",
+        "base_intent": "ACH payment initiation",
+        "expected_content": ["POST ach/v2/payments/credit-transfers", "Initiate an ACH credit"],
+        "relevance_notes": "Question format"
+      },
+      {
+        "query_id": "IV-003",
+        "query": "initiate credit transfer",
+        "category": "Intent Variation",
+        "base_intent": "ACH payment initiation",
+        "expected_content": ["POST ach/v2/payments/credit-transfers", "Initiate an ACH credit"],
+        "relevance_notes": "API terminology"
+      },
+      {
+        "query_id": "IV-004",
+        "query": "check payment status",
+        "category": "Intent Variation",
+        "base_intent": "Status inquiry",
+        "expected_content": ["GET ach/v2/payments/{payment_id}", "transaction status"],
+        "relevance_notes": "Status check phrasing"
+      },
+      {
+        "query_id": "IV-005",
+        "query": "where is my transaction",
+        "category": "Intent Variation",
+        "base_intent": "Status inquiry",
+        "expected_content": ["GET ach/v2/payments/{payment_id}", "status", "COMPLETED"],
+        "relevance_notes": "Colloquial status query"
+      },
+      {
+        "query_id": "IV-006",
+        "query": "track transfer progress",
+        "category": "Intent Variation",
+        "base_intent": "Status inquiry",
+        "expected_content": ["status", "PROCESSING", "COMPLETED"],
+        "relevance_notes": "Tracking terminology"
+      },
+      {
+        "query_id": "IV-007",
+        "query": "get current FX rate",
+        "category": "Intent Variation",
+        "base_intent": "FX rate lookup",
+        "expected_content": ["GET foreign-exchange/v3/rates", "real-time"],
+        "relevance_notes": "Action phrasing"
+      },
+      {
+        "query_id": "IV-008",
+        "query": "what is USD to EUR exchange rate",
+        "category": "Intent Variation",
+        "base_intent": "FX rate lookup",
+        "expected_content": ["foreign-exchange", "exchange_rate", "base_currency_code"],
+        "relevance_notes": "Specific currency query"
+      },
+      {
+        "query_id": "IV-009",
+        "query": "retrieve rate sheets",
+        "category": "Intent Variation",
+        "base_intent": "FX rate lookup",
+        "expected_content": ["customer-rate-sheets", "reference-rate-sheets", "global-rate-sheets"],
+        "relevance_notes": "API method terminology"
+      },
+      {
+        "query_id": "IV-010",
+        "query": "send instant payment",
+        "category": "Intent Variation",
+        "base_intent": "Instant payment creation",
+        "expected_content": ["POST instant-payments/v1/credit-transfers", "near real-time"],
+        "relevance_notes": "Direct action phrasing"
+      },
+      {
+        "query_id": "IV-011",
+        "query": "make RTP transfer",
+        "category": "Intent Variation",
+        "base_intent": "Instant payment creation",
+        "expected_content": ["instant-payments", "RTP", "credit-transfers"],
+        "relevance_notes": "Network-specific terminology"
+      },
+      {
+        "query_id": "IV-012",
+        "query": "can this bank receive instant payments",
+        "category": "Intent Variation",
+        "base_intent": "Routing verification",
+        "expected_content": ["routing-numbers/verify", "instant_payments_enabled", "participant_available"],
+        "relevance_notes": "Capability question"
+      },
+      {
+        "query_id": "IV-013",
+        "query": "validate routing number for FedNow",
+        "category": "Intent Variation",
+        "base_intent": "Routing verification",
+        "expected_content": ["routing-numbers/verify", "FEDNOW", "payment_rail"],
+        "relevance_notes": "Network-specific validation"
+      },
+      {
+        "query_id": "IV-014",
+        "query": "request FX quote",
+        "category": "Intent Variation",
+        "base_intent": "FX quote",
+        "expected_content": ["POST foreign-exchange/v3/quotes", "quote_id"],
+        "relevance_notes": "Quote request phrasing"
+      },
+      {
+        "query_id": "IV-015",
+        "query": "get foreign exchange pricing",
+        "category": "Intent Variation",
+        "base_intent": "FX quote",
+        "expected_content": ["foreign-exchange", "quotes", "rates", "exchange_rate"],
+        "relevance_notes": "Alternative terminology"
+      },
+      {
+        "query_id": "IV-016",
+        "query": "confirm deal from quote",
+        "category": "Intent Variation",
+        "base_intent": "FX deal confirmation",
+        "expected_content": ["POST foreign-exchange/v3/deals/from-quotes", "quote_id", "deal_id"],
+        "relevance_notes": "Deal confirmation phrasing"
+      }
+    ],
+
+    "typo_tolerance": [
+      {
+        "query_id": "TY-001",
+        "query": "authentcation header",
+        "category": "Typo Tolerance",
+        "correct_term": "authentication header",
+        "expected_content": ["Authorization", "Bearer", "OAuth 2"],
+        "relevance_notes": "Missing 'i' in authentication"
+      },
+      {
+        "query_id": "TY-002",
+        "query": "credti transfer",
+        "category": "Typo Tolerance",
+        "correct_term": "credit transfer",
+        "expected_content": ["credit-transfers", "credit transfer"],
+        "relevance_notes": "Transposed letters in credit"
+      },
+      {
+        "query_id": "TY-003",
+        "query": "foriegn exchange",
+        "category": "Typo Tolerance",
+        "correct_term": "foreign exchange",
+        "expected_content": ["foreign-exchange", "Foreign Exchange API"],
+        "relevance_notes": "Common 'ie' vs 'ei' mistake"
+      },
+      {
+        "query_id": "TY-004",
+        "query": "routng number",
+        "category": "Typo Tolerance",
+        "correct_term": "routing number",
+        "expected_content": ["routing_number", "routing-numbers"],
+        "relevance_notes": "Missing 'i' in routing"
+      },
+      {
+        "query_id": "TY-005",
+        "query": "instnt payment",
+        "category": "Typo Tolerance",
+        "correct_term": "instant payment",
+        "expected_content": ["Instant Payments", "instant-payments"],
+        "relevance_notes": "Missing 'a' in instant"
+      },
+      {
+        "query_id": "TY-006",
+        "query": "transacion status",
+        "category": "Typo Tolerance",
+        "correct_term": "transaction status",
+        "expected_content": ["status", "payment_id", "COMPLETED"],
+        "relevance_notes": "Missing 't' in transaction"
+      },
+      {
+        "query_id": "TY-007",
+        "query": "idempotancy key",
+        "category": "Typo Tolerance",
+        "correct_term": "idempotency key",
+        "expected_content": ["idempotency-key", "UUID v4"],
+        "relevance_notes": "Wrong vowel in idempotency"
+      },
+      {
+        "query_id": "TY-008",
+        "query": "webhok notification",
+        "category": "Typo Tolerance",
+        "correct_term": "webhook notification",
+        "expected_content": ["webhook", "notification", "exception-action-required"],
+        "relevance_notes": "Missing 'o' in webhook"
+      },
+      {
+        "query_id": "TY-009",
+        "query": "certificat validation",
+        "category": "Typo Tolerance",
+        "correct_term": "certificate validation",
+        "expected_content": ["certificate", "mutual authentication", ".pem"],
+        "relevance_notes": "Missing 'e' in certificate"
+      },
+      {
+        "query_id": "TY-010",
+        "query": "curency code",
+        "category": "Typo Tolerance",
+        "correct_term": "currency code",
+        "expected_content": ["currency", "base_currency_code", "ISO 4217"],
+        "relevance_notes": "Missing 'r' in currency"
+      },
+      {
+        "query_id": "TY-011",
+        "query": "Oaut 2.0 token",
+        "category": "Typo Tolerance",
+        "correct_term": "OAuth 2.0 token",
+        "expected_content": ["OAuth 2", "access_token", "Bearer"],
+        "relevance_notes": "Missing 'h' in OAuth"
+      },
+      {
+        "query_id": "TY-012",
+        "query": "gateway entiy id",
+        "category": "Typo Tolerance",
+        "correct_term": "gateway entity id",
+        "expected_content": ["gateway-entity-id", "Entity ID"],
+        "relevance_notes": "Missing 't' in entity"
+      }
+    ],
+
+    "acronym_handling": [
+      {
+        "query_id": "AC-001",
+        "query": "ACH payment",
+        "category": "Acronym Handling",
+        "full_form": "Automated Clearing House payment",
+        "expected_content": ["ACH", "Automated Clearing House", "ach/v2/payments"],
+        "relevance_notes": "Common acronym"
+      },
+      {
+        "query_id": "AC-002",
+        "query": "Automated Clearing House transfer",
+        "category": "Acronym Handling",
+        "full_form": "ACH transfer",
+        "expected_content": ["ACH", "credit-transfers", "direct-debits"],
+        "relevance_notes": "Full form of ACH"
+      },
+      {
+        "query_id": "AC-003",
+        "query": "RTP network",
+        "category": "Acronym Handling",
+        "full_form": "Real-Time Payments network",
+        "expected_content": ["RTP", "payment_rail", "instant"],
+        "relevance_notes": "Payment network acronym"
+      },
+      {
+        "query_id": "AC-004",
+        "query": "FedNow payment",
+        "category": "Acronym Handling",
+        "full_form": "Federal Reserve Now payment",
+        "expected_content": ["FEDNOW", "payment_rail", "instant-payments"],
+        "relevance_notes": "Federal Reserve network"
+      },
+      {
+        "query_id": "AC-005",
+        "query": "SEC code CCD",
+        "category": "Acronym Handling",
+        "full_form": "Standard Entry Class - Corporate Credit or Debit",
+        "expected_content": ["CCD", "Corporate Credit or Debit", "sec_code"],
+        "relevance_notes": "ACH SEC code"
+      },
+      {
+        "query_id": "AC-006",
+        "query": "PPD entry",
+        "category": "Acronym Handling",
+        "full_form": "Prearranged Payment and Deposit",
+        "expected_content": ["PPD", "Prearranged Payment and Deposit", "sec_code"],
+        "relevance_notes": "ACH SEC code"
+      },
+      {
+        "query_id": "AC-007",
+        "query": "IAT transaction",
+        "category": "Acronym Handling",
+        "full_form": "International ACH Transaction",
+        "expected_content": ["IAT", "International ACH", "domestic only"],
+        "relevance_notes": "International ACH acronym"
+      },
+      {
+        "query_id": "AC-008",
+        "query": "CTX payment",
+        "category": "Acronym Handling",
+        "full_form": "Corporate Trade Exchange",
+        "expected_content": ["CTX", "Corporate Trade Exchange", "addenda"],
+        "relevance_notes": "CTX SEC code"
+      },
+      {
+        "query_id": "AC-009",
+        "query": "FX API",
+        "category": "Acronym Handling",
+        "full_form": "Foreign Exchange API",
+        "expected_content": ["Foreign Exchange", "foreign-exchange/v3"],
+        "relevance_notes": "Forex abbreviation"
+      },
+      {
+        "query_id": "AC-010",
+        "query": "UUID format",
+        "category": "Acronym Handling",
+        "full_form": "Universally Unique Identifier",
+        "expected_content": ["UUID", "RFC 4122", "client-request-id", "idempotency-key"],
+        "relevance_notes": "Identifier format"
+      },
+      {
+        "query_id": "AC-011",
+        "query": "UETR lookup",
+        "category": "Acronym Handling",
+        "full_form": "Unique End-to-End Transaction Reference",
+        "expected_content": ["uetr", "credit-transfers/{uetr}"],
+        "relevance_notes": "Transaction reference"
+      },
+      {
+        "query_id": "AC-012",
+        "query": "ISO 4217 currency",
+        "category": "Acronym Handling",
+        "full_form": "International Organization for Standardization currency codes",
+        "expected_content": ["ISO 4217", "currency", "3 characters", "USD"],
+        "relevance_notes": "Currency standard"
+      },
+      {
+        "query_id": "AC-013",
+        "query": "NOC code",
+        "category": "Acronym Handling",
+        "full_form": "Notification of Change",
+        "expected_content": ["Notification of Change", "C61", "C62", "NOC"],
+        "relevance_notes": "ACH notification code"
+      },
+      {
+        "query_id": "AC-014",
+        "query": "ABA routing",
+        "category": "Acronym Handling",
+        "full_form": "American Bankers Association routing",
+        "expected_content": ["routing", "9 digits", "routing_number"],
+        "relevance_notes": "Bank routing acronym"
+      },
+      {
+        "query_id": "AC-015",
+        "query": "mTLS certificate",
+        "category": "Acronym Handling",
+        "full_form": "mutual Transport Layer Security",
+        "expected_content": ["Mutual authentication", "certificate", ".pem", ".key"],
+        "relevance_notes": "Security protocol acronym"
+      }
+    ],
+
+    "negative_testing": [
+      {
+        "query_id": "NT-001",
+        "query": "credit card payment API",
+        "category": "Negative Testing",
+        "expected_chunks": [],
+        "expected_behavior": "No results or low-relevance results only",
+        "relevance_notes": "Not a supported API - no credit card processing"
+      },
+      {
+        "query_id": "NT-002",
+        "query": "cryptocurrency bitcoin transfer",
+        "category": "Negative Testing",
+        "expected_chunks": [],
+        "expected_behavior": "No results",
+        "relevance_notes": "Crypto not supported"
+      },
+      {
+        "query_id": "NT-003",
+        "query": "mobile app download",
+        "category": "Negative Testing",
+        "expected_chunks": [],
+        "expected_behavior": "No results",
+        "relevance_notes": "Not API documentation"
+      },
+      {
+        "query_id": "NT-004",
+        "query": "customer support phone number",
+        "category": "Negative Testing",
+        "expected_chunks": [],
+        "expected_behavior": "No results",
+        "relevance_notes": "Not technical documentation"
+      },
+      {
+        "query_id": "NT-005",
+        "query": "loan application endpoint",
+        "category": "Negative Testing",
+        "expected_chunks": [],
+        "expected_behavior": "No results",
+        "relevance_notes": "Different product domain"
+      },
+      {
+        "query_id": "NT-006",
+        "query": "GraphQL API",
+        "category": "Negative Testing",
+        "expected_chunks": [],
+        "expected_behavior": "No results",
+        "relevance_notes": "Only REST APIs documented"
+      },
+      {
+        "query_id": "NT-007",
+        "query": "SWIFT wire transfer",
+        "category": "Negative Testing",
+        "expected_chunks": [],
+        "expected_behavior": "No results or minimal",
+        "relevance_notes": "SWIFT not in these APIs"
+      },
+      {
+        "query_id": "NT-008",
+        "query": "account balance inquiry",
+        "category": "Negative Testing",
+        "expected_chunks": [],
+        "expected_behavior": "No results",
+        "relevance_notes": "Balance inquiry not in payment APIs"
+      },
+      {
+        "query_id": "NT-009",
+        "query": "Zelle payment",
+        "category": "Negative Testing",
+        "expected_chunks": [],
+        "expected_behavior": "No results",
+        "relevance_notes": "Zelle is separate from these APIs"
+      },
+      {
+        "query_id": "NT-010",
+        "query": "stock trading API",
+        "category": "Negative Testing",
+        "expected_chunks": [],
+        "expected_behavior": "No results",
+        "relevance_notes": "Trading not supported"
+      }
+    ],
+
+    "cross_category_accuracy": [
+      {
+        "query_id": "CC-001",
+        "query": "ACH credit idempotency webhook",
+        "category": "Cross-category",
+        "spans_concepts": ["ACH credit", "idempotency", "webhooks"],
+        "expected_content": ["credit-transfers", "idempotency-key", "ach.payment.exception-action-required.v1"],
+        "relevance_notes": "Should combine results from multiple concept areas"
+      },
+      {
+        "query_id": "CC-002",
+        "query": "instant payment routing RTP",
+        "category": "Cross-category",
+        "spans_concepts": ["instant payments", "routing verification", "RTP network"],
+        "expected_content": ["instant-payments", "routing-numbers/verify", "RTP", "payment_rail"],
+        "relevance_notes": "Instant + routing + network"
+      },
+      {
+        "query_id": "CC-003",
+        "query": "FX quote authentication timeout",
+        "category": "Cross-category",
+        "spans_concepts": ["forex quotes", "authentication", "timeout"],
+        "expected_content": ["foreign-exchange/v3/quotes", "OAuth 2", "Bearer"],
+        "relevance_notes": "FX + auth + timeout handling"
+      },
+      {
+        "query_id": "CC-004",
+        "query": "SEC code CTX addenda",
+        "category": "Cross-category",
+        "spans_concepts": ["SEC codes", "CTX", "addenda"],
+        "expected_content": ["CTX", "Corporate Trade Exchange", "addenda", "1,500"],
+        "relevance_notes": "SEC code + addenda details"
+      },
+      {
+        "query_id": "CC-005",
+        "query": "gateway-entity-id OAuth scope",
+        "category": "Cross-category",
+        "spans_concepts": ["gateway header", "OAuth", "scope"],
+        "expected_content": ["gateway-entity-id", "OAuth 2", "ACH-All"],
+        "relevance_notes": "Header + OAuth scope"
+      },
+      {
+        "query_id": "CC-006",
+        "query": "currency conversion SPOT rate",
+        "category": "Cross-category",
+        "spans_concepts": ["forex conversion", "SPOT value date"],
+        "expected_content": ["exchange_rate", "SPOT", "value_date_type", "base_currency_code"],
+        "relevance_notes": "FX conversion + settlement timing"
+      },
+      {
+        "query_id": "CC-007",
+        "query": "instant payment search pagination",
+        "category": "Cross-category",
+        "spans_concepts": ["instant payments", "search", "pagination"],
+        "expected_content": ["instant-payments/v1/search", "page_limit", "page_index", "pagination"],
+        "relevance_notes": "Search + pagination params"
+      },
+      {
+        "query_id": "CC-008",
+        "query": "creditor account validation FedNow",
+        "category": "Cross-category",
+        "spans_concepts": ["creditor", "validation", "FedNow"],
+        "expected_content": ["creditor", "routing-numbers/verify", "FEDNOW"],
+        "relevance_notes": "Creditor + routing + network"
+      },
+      {
+        "query_id": "CC-009",
+        "query": "ACH return webhook notification",
+        "category": "Cross-category",
+        "spans_concepts": ["ACH returns", "webhooks"],
+        "expected_content": ["return_reason_code", "ach.payment.exception-action-required.v1", "webhook"],
+        "relevance_notes": "Returns + notifications"
+      },
+      {
+        "query_id": "CC-010",
+        "query": "deal offset quote cancel",
+        "category": "Cross-category",
+        "spans_concepts": ["FX deals", "offset", "quote cancellation"],
+        "expected_content": ["deals/offset", "quotes/cancel", "quotes/offset"],
+        "relevance_notes": "FX deal management operations"
+      }
+    ],
+
+    "additional_coverage": [
+      {
+        "query_id": "AD-001",
+        "query": "prenote transaction",
+        "category": "Additional Coverage",
+        "expected_content": ["prenote", "amount 0", "Pre-Note Return"],
+        "relevance_notes": "ACH prenote feature"
+      },
+      {
+        "query_id": "AD-002",
+        "query": "duplicate check window",
+        "category": "Additional Coverage",
+        "expected_content": ["duplicate_check", "1 to 124-day", "duplicate transactions"],
+        "relevance_notes": "Duplicate detection window"
+      },
+      {
+        "query_id": "AD-003",
+        "query": "third party spread",
+        "category": "Additional Coverage",
+        "expected_content": ["third_party_spread_percent", "percentage spread"],
+        "relevance_notes": "FX spread parameter"
+      },
+      {
+        "query_id": "AD-004",
+        "query": "debtor information",
+        "category": "Additional Coverage",
+        "expected_content": ["debtor", "name", "bank_account", "address"],
+        "relevance_notes": "Debtor object fields"
+      },
+      {
+        "query_id": "AD-005",
+        "query": "end to end id",
+        "category": "Additional Coverage",
+        "expected_content": ["end_to_end_id", "transaction reference", "recipient_id"],
+        "relevance_notes": "Transaction identifier field"
+      },
+      {
+        "query_id": "AD-006",
+        "query": "effective entry date",
+        "category": "Additional Coverage",
+        "expected_content": ["calculated_effective_date", "posting", "settlement"],
+        "relevance_notes": "ACH effective date"
+      },
+      {
+        "query_id": "AD-007",
+        "query": "rate sheet expiration",
+        "category": "Additional Coverage",
+        "expected_content": ["effective_end_date", "effective_start_date", "rate_sheet"],
+        "relevance_notes": "FX rate validity period"
+      },
+      {
+        "query_id": "AD-008",
+        "query": "payment remittance info",
+        "category": "Additional Coverage",
+        "expected_content": ["remittance_information", "unstructured_addenda"],
+        "relevance_notes": "Payment remittance details"
+      },
+      {
+        "query_id": "AD-009",
+        "query": "ceo company id header",
+        "category": "Additional Coverage",
+        "expected_content": ["ceo-company-id", "third-party service provider", "optional"],
+        "relevance_notes": "Optional CEO company header"
+      },
+      {
+        "query_id": "AD-010",
+        "query": "trace number",
+        "category": "Additional Coverage",
+        "expected_content": ["trace_number", "originating institution", "return_trace_number"],
+        "relevance_notes": "ACH trace number"
+      },
+      {
+        "query_id": "AD-011",
+        "query": "legal entity id format",
+        "category": "Additional Coverage",
+        "expected_content": ["legal_entity_id", "20 characters", "alphanumeric"],
+        "relevance_notes": "LEI format requirements"
+      },
+      {
+        "query_id": "AD-012",
+        "query": "release notes changes",
+        "category": "Additional Coverage",
+        "expected_content": ["Release Notes", "Version", "Updated", "New"],
+        "relevance_notes": "API version history"
+      }
+    ]
+  },
+
+  "evaluation_metrics": {
+    "precision_at_k": {
+      "description": "Percentage of returned results that are relevant",
+      "k_values": [3, 5, 10],
+      "target_precision": {
+        "k3": 0.80,
+        "k5": 0.70,
+        "k10": 0.60
+      }
+    },
+    "recall_at_k": {
+      "description": "Percentage of relevant documents that are returned",
+      "k_values": [3, 5, 10],
+      "target_recall": {
+        "k3": 0.50,
+        "k5": 0.70,
+        "k10": 0.90
+      }
+    },
+    "mrr": {
+      "description": "Mean Reciprocal Rank - position of first relevant result",
+      "target": 0.75
+    },
+    "ndcg": {
+      "description": "Normalized Discounted Cumulative Gain",
+      "target": 0.80
+    }
+  },
+
+  "test_execution_guidelines": {
+    "batch_testing": "Run all queries in category batches for systematic evaluation",
+    "result_logging": "Log query, returned chunks (ranked), timestamps, and latency",
+    "content_matching": "Verify returned chunks contain expected content keywords",
+    "failure_analysis": "For queries with precision <0.5, analyze failure mode",
+    "regression_testing": "Re-run after any index or algorithm changes",
+    "a_b_testing": "Compare synonym/typo queries against base queries"
+  }
+}
