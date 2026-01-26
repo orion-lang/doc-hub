@@ -1,0 +1,75 @@
+STRUCTURAL_INTENT_ANALYSIS_PROMPT = """Analyze the STRUCTURE of this developer portal content to infer user intents.
+
+CONTENT STRUCTURE:
+{content_structure}
+
+SAMPLE CONTENT:
+{sample_content}
+
+Look for structural patterns that indicate intent:
+
+1. NAVIGATION STRUCTURE
+   - Top-level sections (e.g., "Guides", "API Reference", "SDKs")
+   - How content is organized
+   - What this tells us about expected user journeys
+
+2. PAGE STRUCTURE PATTERNS
+   - Pages with numbered steps → Procedural intent
+   - Pages with endpoint specs → Reference intent
+   - Pages with error tables → Troubleshooting intent
+   - Pages with feature lists → Discovery intent
+   - Pages with code blocks → Implementation intent
+
+3. HEADER PATTERNS
+   - "Getting Started" → Onboarding intent
+   - "How to..." → Process guidance intent
+   - "API Reference" → Lookup intent
+   - "Troubleshooting" → Fix intent
+   - "Overview" → Discovery intent
+
+4. CONTENT ELEMENTS
+   - Code samples → Implementation intent
+   - Tables → Reference/comparison intent
+   - Step lists → Process intent
+   - Warning/info boxes → Troubleshooting intent
+
+Return JSON:
+{{
+    "structural_intent_analysis": {{
+        "navigation_based_intents": [
+            {{
+                "nav_section": "Guides",
+                "inferred_intent": "PROCESS_GUIDANCE",
+                "confidence": 0.9
+            }}
+        ],
+        "page_structure_intents": [
+            {{
+                "pattern": "numbered_steps",
+                "count": 15,
+                "inferred_intent": "PROCESS_GUIDANCE"
+            }},
+            {{
+                "pattern": "endpoint_specification",
+                "count": 45,
+                "inferred_intent": "API_REFERENCE"
+            }}
+        ],
+        "header_pattern_intents": [
+            {{
+                "pattern": "How to *",
+                "occurrences": 20,
+                "inferred_intent": "PROCESS_GUIDANCE"
+            }}
+        ]
+    }},
+    "derived_primary_intents": [
+        {{
+            "name": "INTENT_NAME",
+            "description": "Description",
+            "structural_evidence": ["evidence1", "evidence2"],
+            "signal_phrases": ["derived from headers and patterns"],
+            "confidence": 0.85
+        }}
+    ]
+}}"""
