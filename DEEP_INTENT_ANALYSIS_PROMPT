@@ -1,0 +1,64 @@
+DEEP_INTENT_ANALYSIS_PROMPT = """Perform deep analysis of this developer portal content to discover all user intents.
+
+CONTENT TO ANALYZE:
+{raw_content}
+
+Analyze the content looking for:
+
+1. EXPLICIT INTENT SIGNALS
+   - Section headers that indicate purpose (e.g., "Getting Started", "Troubleshooting")
+   - Action words in titles (e.g., "Create", "Configure", "Debug")
+   - Question formats (e.g., "How to...", "What is...")
+
+2. IMPLICIT INTENT SIGNALS
+   - Content structure (numbered steps = procedural intent)
+   - Code blocks (implementation intent)
+   - Error messages (troubleshooting intent)
+   - Comparison tables (evaluation intent)
+
+3. USER JOURNEY INTENTS
+   - What does a new developer need? (onboarding)
+   - What does an implementing developer need? (integration)
+   - What does a debugging developer need? (troubleshooting)
+   - What does an evaluating developer need? (discovery)
+
+Extract intents with evidence directly from content:
+
+Return JSON:
+{{
+    "discovered_intents": [
+        {{
+            "name": "INTENT_NAME",
+            "description": "What the user wants to accomplish",
+            "discovery_method": "How this intent was identified",
+            "evidence_from_content": [
+                {{
+                    "content_title": "Page or section title",
+                    "evidence_type": "explicit_header | implicit_structure | user_journey",
+                    "evidence_text": "Exact text or pattern found",
+                    "confidence": 0.95
+                }}
+            ],
+            "signal_phrases": {{
+                "high_confidence": ["phrases that strongly indicate this intent"],
+                "medium_confidence": ["phrases that suggest this intent"],
+                "negative": ["phrases that indicate NOT this intent"]
+            }},
+            "user_personas": ["new_developer", "experienced_developer", "debugger"],
+            "question_patterns": ["How do I...", "What is..."],
+            "expected_response_type": "step_by_step | reference | explanation | list | code"
+        }}
+    ],
+    "intent_hierarchy": {{
+        "primary": ["main intents"],
+        "secondary": ["supporting intents"],
+        "edge_case": ["rare but valid intents"]
+    }},
+    "content_gaps": [
+        {{
+            "missing_intent": "Intent users might have but content doesn't address",
+            "evidence": "Why this gap exists",
+            "recommendation": "What content would help"
+        }}
+    ]
+}}"""

@@ -1,0 +1,48 @@
+KEYWORD_EXTRACTION_PROMPT = """Based on this domain/subdomain taxonomy, generate comprehensive CLASSIFICATION KEYWORDS.
+
+TAXONOMY:
+{taxonomy_json}
+
+For each domain and subdomain, generate:
+
+1. PRIMARY KEYWORDS (high confidence indicators)
+   - Words that strongly indicate this domain/subdomain
+   - Typically nouns and technical terms
+   
+2. SECONDARY KEYWORDS (supporting indicators)
+   - Words that suggest this domain when combined with others
+   - Action verbs, modifiers
+   
+3. NEGATIVE KEYWORDS (exclusion indicators)
+   - Words that indicate NOT this domain despite similar terms
+   - Help disambiguate overlapping areas
+
+4. REGEX PATTERNS (for complex matching)
+   - Patterns for multi-word terms
+   - Patterns for variations (oauth 2.0, oauth2, oauth-2)
+
+Return JSON:
+{{
+    "domain_keywords": {{
+        "authentication": {{
+            "primary": ["oauth", "authentication", "token", "api key"],
+            "secondary": ["login", "credential", "authorize", "permission"],
+            "negative": ["payment token", "device token"],
+            "regex_patterns": ["oauth\\\\s*2?\\\\.?0?", "api[-_]?key"],
+            "weight": 1.0
+        }}
+    }},
+    "subdomain_keywords": {{
+        "authentication.oauth": {{
+            "primary": ["oauth", "authorization code", "client credentials"],
+            "secondary": ["redirect uri", "pkce", "grant type"],
+            "negative": ["api key"],
+            "regex_patterns": ["oauth\\\\s*(2\\\\.0|2)?"],
+            "requires_domain": true
+        }}
+    }},
+    "disambiguation_rules": [
+        {{"keywords": ["token"], "if_also_contains": ["refresh", "access"], "then_domain": "authentication"}},
+        {{"keywords": ["token"], "if_also_contains": ["payment", "card"], "then_domain": "payments"}}
+    ]
+}}"""

@@ -1,0 +1,49 @@
+ACTION_DISCOVERY_PROMPT = """Analyze this developer portal content to identify common ACTIONS (operations/verbs).
+
+CONTENT TITLES AND DESCRIPTIONS:
+{content_titles}
+
+API ENDPOINTS (if available):
+{api_endpoints}
+
+An ACTION represents what the user wants to DO. Actions are typically verbs.
+
+COMMON ACTION CATEGORIES:
+- CRUD: create, read/get, update, delete
+- Lookup: list, search, find, filter
+- Configuration: configure, setup, enable, disable
+- Lifecycle: start, stop, cancel, retry
+- Troubleshooting: debug, validate, test, verify
+
+Identify actions that are:
+1. Common across multiple domains
+2. Useful for understanding user intent
+3. Present in your actual content
+
+Return JSON:
+{{
+    "actions": [
+        {{
+            "name": "create",
+            "display_name": "Create",
+            "description": "Creating new resources",
+            "keywords": ["create", "make", "new", "add", "generate", "initiate"],
+            "applies_to_domains": ["payments", "accounts", "webhooks"],
+            "typical_patterns": ["create a", "how to create", "creating", "new"]
+        }},
+        {{
+            "name": "configure",
+            "display_name": "Configure",
+            "description": "Setting up or configuring features",
+            "keywords": ["configure", "setup", "set up", "config", "settings", "enable"],
+            "applies_to_domains": ["authentication", "webhooks"],
+            "typical_patterns": ["configure", "how to set up", "setting up"]
+        }}
+    ],
+    "action_priority": ["The order to check actions - more specific first"],
+    "action_domain_matrix": {{
+        "create": ["payments", "accounts"],
+        "configure": ["authentication", "webhooks"],
+        "troubleshoot": ["all"]
+    }}
+}}"""

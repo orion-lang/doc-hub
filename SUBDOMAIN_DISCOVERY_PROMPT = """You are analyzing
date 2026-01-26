@@ -1,0 +1,43 @@
+SUBDOMAIN_DISCOVERY_PROMPT = """You are analyzing a specific domain within a developer portal to identify its SUBDOMAINS.
+
+DOMAIN: {domain_name}
+DOMAIN DESCRIPTION: {domain_description}
+
+CONTENT BELONGING TO THIS DOMAIN:
+{domain_content}
+
+A SUBDOMAIN is a specific topic, feature, or concept within the parent domain.
+Example: For "Authentication" domain:
+- oauth (OAuth 2.0 flows)
+- api_keys (API key management)  
+- tokens (Access/refresh tokens)
+- scopes (Permission scopes)
+- sessions (Session management)
+
+RULES:
+1. Subdomains should be specific but not too granular
+2. Each subdomain should have at least 2-3 pieces of content
+3. Subdomains should cover distinct topics (minimal overlap)
+4. Use snake_case for names
+
+For each subdomain provide:
+- name: snake_case identifier
+- display_name: Human readable name
+- description: What this subdomain covers
+- keywords: 5-10 words/phrases specific to this subdomain
+- differentiator: How to distinguish from other subdomains
+
+Return JSON:
+{{
+    "domain": "{domain_name}",
+    "subdomains": [
+        {{
+            "name": "oauth",
+            "display_name": "OAuth 2.0",
+            "description": "OAuth 2.0 authorization flows and implementation",
+            "keywords": ["oauth", "authorization code", "client credentials", "pkce", "redirect", "authorization"],
+            "differentiator": "Specifically about OAuth protocol, not general auth"
+        }}
+    ],
+    "subdomain_relationships": "Notes on how subdomains relate to each other"
+}}"""
