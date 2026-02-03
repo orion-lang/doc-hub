@@ -24,16 +24,16 @@ from typing import List, Dict, Any
 # Input directory containing JSON files (with subfolders)
 # Example structure:
 #   keywords/
-#   ├── API ReferenceF/
+#   ├── api-reference/
 #   │   ├── instant_payment.json
 #   │   ├── ACH_Payments.json
 #   │   └── ...
-#   ├── Guides/
+#   ├── guides/
 #   │   ├── webhooks.json
 #   │   └── ...
-#   ├── Solutions/
+#   ├── solution/
 #   │   └── ...
-#   └── productoverview/
+#   └── api-overview/
 #       └── ...
 
 INPUT_DIR = "./keywords"  # Root folder containing all JSON files
@@ -121,14 +121,14 @@ def detect_document_type(content: Dict[str, Any], filepath: str) -> str:
     """Detect the type of documentation based on JSON structure and filepath."""
     filepath_lower = filepath.lower()
 
-    # Check filepath for hints
-    if "api reference" in filepath_lower or "apireference" in filepath_lower:
+    # Check filepath for hints (updated folder names)
+    if "api-reference" in filepath_lower or "api reference" in filepath_lower or "apireference" in filepath_lower:
         return "api_reference"
-    elif "guide" in filepath_lower:
+    elif "guides" in filepath_lower or "guide" in filepath_lower:
         return "guide"
     elif "solution" in filepath_lower:
         return "solution"
-    elif "overview" in filepath_lower or "productoverview" in filepath_lower:
+    elif "api-overview" in filepath_lower or "product-overview" in filepath_lower or "productoverview" in filepath_lower:
         return "product_overview"
 
     # Check JSON structure
